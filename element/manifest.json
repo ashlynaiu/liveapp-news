@@ -1,0 +1,16 @@
+{
+    "id": "",
+    "manifest_version": 1,
+    "name": "fsc-news",
+    "version_name": "1.0",
+    "version_number": 1,
+    "sizing": "fit_content",
+    "initial_height": 300,
+    "initial_width": 300,
+    "js_files": [
+        "dist/element.js"
+    ],
+    "css_files": [
+        "dist/element.css"
+    ]
+}
