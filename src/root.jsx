@@ -30,22 +30,17 @@ class Root extends React.Component {
             let todayDetails = cleanArray[0];
             let yesterdayDetails = cleanArray[1];
 
-            // Reference
-            // let todayClose = todayDetails[4];
-            // let todayOpen = todayDetails[1];
-            // let yesterdayClose = yesterdayDetails[4];
-            console.log(-(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2))
             this.setState({
                 close: todayDetails["4. close"],
                 open: todayDetails["1. open"],
-                priceChange: -(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2)
+                priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
             })
         })
         .catch(err => {
-            console.log(err)
-            //this.setState({error:[...this.state.error, error]})
+            this.setState({error:[...this.state.error, error]})
         })
     }
+
     fetchNews(ticker) {
         const api_key = '60c438deac3f44ee98d47227f06193e1'
         const search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search'
@@ -56,6 +51,7 @@ class Root extends React.Component {
         fetch(`${search_url}?q=$${ticker}+stock&sortby=date&count=3`, {headers: fetchHeaders}).then(response => response.json())
             .then(json => {
                 this.setState({news: json.value})
+                console.log(this.state.news)
             })
             .catch(error => {
                 this.setState({error:[...this.state.error, error]})
@@ -118,10 +114,11 @@ class Root extends React.Component {
 
     tickerNews() {
         return this.state.news.map((article, index) =>
-            <div key={index}>
-                <div>{article.name}</div>
-                <div>{this.timeSince(article.datePublished)}</div>
-                <a href={article.url}>Link</a>
+            <div className={Styles.newsContainer} key={index}>
+                <h4 className={Styles.truncate}>
+                    <a href={article.url} target="_blank">{article.name}</a>
+                </h4>
+                <div>{article.provider[0].name} | {this.timeSince(article.datePublished)}</div>
             </div>
         )
     }
@@ -129,10 +126,9 @@ class Root extends React.Component {
     render() {
 
         return (
-          <div className={Styles.hello}>
+          <div className={Styles.news}>
             <div className={Styles.newsInput}>
-              <label>Add a Ticker Symbol</label>
-              <input placeholder="Ticker"/>
+              <input placeholder="Add Ticker"/>
               <button>Submit</button>
             </div>
             {this.state.news ? this.tickerNews() : null}

@@ -71,7 +71,7 @@
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"hello":"A9vu6M7swkr9r8Jlnyif8"};
+module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM"};
 
 /***/ }),
 /* 1 */
@@ -140,19 +140,13 @@ var Root = function (_React$Component) {
                 var todayDetails = cleanArray[0];
                 var yesterdayDetails = cleanArray[1];
 
-                // Reference
-                // let todayClose = todayDetails[4];
-                // let todayOpen = todayDetails[1];
-                // let yesterdayClose = yesterdayDetails[4];
-                console.log(-(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2));
                 _this2.setState({
                     close: todayDetails["4. close"],
                     open: todayDetails["1. open"],
-                    priceChange: -(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2)
+                    priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
                 });
             }).catch(function (err) {
-                console.log(err);
-                //this.setState({error:[...this.state.error, error]})
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [error]) });
             });
         }
     }, {
@@ -170,6 +164,7 @@ var Root = function (_React$Component) {
                 return response.json();
             }).then(function (json) {
                 _this3.setState({ news: json.value });
+                console.log(_this3.state.news);
             }).catch(function (error) {
                 _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [error]) });
             });
@@ -237,21 +232,22 @@ var Root = function (_React$Component) {
             return this.state.news.map(function (article, index) {
                 return React.createElement(
                     'div',
-                    { key: index },
+                    { className: _root2.default.newsContainer, key: index },
                     React.createElement(
-                        'div',
-                        null,
-                        article.name
+                        'h4',
+                        { className: _root2.default.truncate },
+                        React.createElement(
+                            'a',
+                            { href: article.url, target: '_blank' },
+                            article.name
+                        )
                     ),
                     React.createElement(
                         'div',
                         null,
+                        article.provider[0].name,
+                        ' | ',
                         _this4.timeSince(article.datePublished)
-                    ),
-                    React.createElement(
-                        'a',
-                        { href: article.url },
-                        'Link'
                     )
                 );
             });
@@ -262,16 +258,11 @@ var Root = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: _root2.default.hello },
+                { className: _root2.default.news },
                 React.createElement(
                     'div',
                     { className: _root2.default.newsInput },
-                    React.createElement(
-                        'label',
-                        null,
-                        'Add a Ticker Symbol'
-                    ),
-                    React.createElement('input', { placeholder: 'Ticker' }),
+                    React.createElement('input', { placeholder: 'Add Ticker' }),
                     React.createElement(
                         'button',
                         null,

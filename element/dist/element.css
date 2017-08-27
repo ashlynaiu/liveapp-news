@@ -1,11 +1,35 @@
-/* Copyright 2017 Quip */
-.A9vu6M7swkr9r8Jlnyif8 {
+.wZCJ5NZMxDLOtvkTS64kN {
+  width: 400px;
+}
+._3j3n8vdkkF4_zxLwhIScaf {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-bottom: 8px;
+}
+._3j3n8vdkkF4_zxLwhIScaf input {
+  width: 80%;
+}
+._2G9IqEX8QmQBQoiXWRSzJY {
+  width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+._2G9IqEX8QmQBQoiXWRSzJY:not(:last-child) {
+  margin-bottom: 15px;
+}
+._2G9IqEX8QmQBQoiXWRSzJY ._3yQEETRaRRRH5T6uLam7nM {
+  width: 400px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1ba2e3;
+}
+._2G9IqEX8QmQBQoiXWRSzJY h4 a {
+  color: #1ba2e3;
 }
 
 /*# sourceMappingURL=element.css.map*/
