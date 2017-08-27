@@ -88,71 +88,208 @@ var _root2 = _interopRequireDefault(_root);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // Copyright 2017 Quip
+//import Service from "./service.jsx"
+
 
 var Root = function (_React$Component) {
-  _inherits(Root, _React$Component);
+    _inherits(Root, _React$Component);
 
-  function Root() {
-    _classCallCheck(this, Root);
+    function Root(props) {
+        _classCallCheck(this, Root);
 
-    return _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).apply(this, arguments));
-  }
+        var _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props));
 
-  _createClass(Root, [{
-    key: "render",
-    value: function render() {
-      return React.createElement(
-        "div",
-        { className: _root2.default.hello },
-        React.createElement(
-          "div",
-          { className: _root2.default.newsInput },
-          React.createElement(
-            "label",
-            null,
-            "Add a Ticker Symbol"
-          ),
-          React.createElement("input", { placeholder: "Ticker" })
-        ),
-        React.createElement(
-          "div",
-          { className: _root2.default.newsResult },
-          React.createElement(
-            "h4",
-            null,
-            React.createElement(
-              "a",
-              null,
-              "News article title"
-            )
-          ),
-          React.createElement(
-            "span",
-            null,
-            "Article Author"
-          ),
-          React.createElement(
-            "span",
-            null,
-            "Published"
-          )
-        )
-      );
+        _this.state = {
+            news: null,
+            ticker: 'CRM',
+            close: null,
+            open: null,
+            priceChange: null,
+            error: []
+        };
+        return _this;
     }
-  }]);
 
-  return Root;
+    _createClass(Root, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var ticker = this.state.ticker;
+            this.fetchNews(ticker);
+            this.fetchDetails(ticker);
+        }
+    }, {
+        key: 'fetchDetails',
+        value: function fetchDetails(ticker) {
+            var _this2 = this;
+
+            fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + ticker + '&apikey=AU2Q75AJK6FBD0KQ').then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                //Clean array
+                var cleanArray = Object.keys(json['Time Series (Daily)']).map(function (key) {
+                    return json['Time Series (Daily)'][key];
+                });
+                //Save only today's and yesterday's details
+                var todayDetails = cleanArray[0];
+                var yesterdayDetails = cleanArray[1];
+
+                // Reference
+                // let todayClose = todayDetails[4];
+                // let todayOpen = todayDetails[1];
+                // let yesterdayClose = yesterdayDetails[4];
+                console.log(-(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2));
+                _this2.setState({
+                    close: todayDetails["4. close"],
+                    open: todayDetails["1. open"],
+                    priceChange: -(yesterdayDetails["4. close"] - todayDetails["4. close"]).toFixed(2)
+                });
+            }).catch(function (err) {
+                console.log(err);
+                //this.setState({error:[...this.state.error, error]})
+            });
+        }
+    }, {
+        key: 'fetchNews',
+        value: function fetchNews(ticker) {
+            var _this3 = this;
+
+            var api_key = '60c438deac3f44ee98d47227f06193e1';
+            var search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search';
+            var fetchHeaders = {
+                'Ocp-Apim-Subscription-Key': '' + api_key
+            };
+
+            fetch(search_url + '?q=$' + ticker + '+stock&sortby=date&count=3', { headers: fetchHeaders }).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                _this3.setState({ news: json.value });
+            }).catch(function (error) {
+                _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [error]) });
+            });
+        }
+    }, {
+        key: 'timeSince',
+        value: function timeSince(date) {
+            var seconds = Math.floor((new Date() - new Date(date)) / 1000);
+
+            var interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' year ago';
+                }
+                return interval + ' years ago';
+            }
+
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' month ago';
+                }
+                return interval + ' months ago';
+            }
+
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' day ago';
+                }
+                return interval + ' days ago';
+            }
+
+            interval = Math.floor(seconds / 3600);
+
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' hour ago';
+                }
+                return interval + ' hours ago';
+            }
+
+            interval = Math.floor(seconds / 60);
+
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' minute ago';
+                }
+                return interval + ' minutes ago';
+            }
+
+            interval = Math.floor(seconds);
+
+            if (interval == 1) {
+                return interval + ' second ago';
+            }
+
+            return interval + ' seconds ago';
+        }
+    }, {
+        key: 'tickerNews',
+        value: function tickerNews() {
+            var _this4 = this;
+
+            return this.state.news.map(function (article, index) {
+                return React.createElement(
+                    'div',
+                    { key: index },
+                    React.createElement(
+                        'div',
+                        null,
+                        article.name
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
+                        _this4.timeSince(article.datePublished)
+                    ),
+                    React.createElement(
+                        'a',
+                        { href: article.url },
+                        'Link'
+                    )
+                );
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            return React.createElement(
+                'div',
+                { className: _root2.default.hello },
+                React.createElement(
+                    'div',
+                    { className: _root2.default.newsInput },
+                    React.createElement(
+                        'label',
+                        null,
+                        'Add a Ticker Symbol'
+                    ),
+                    React.createElement('input', { placeholder: 'Ticker' }),
+                    React.createElement(
+                        'button',
+                        null,
+                        'Submit'
+                    )
+                ),
+                this.state.news ? this.tickerNews() : null
+            );
+        }
+    }]);
+
+    return Root;
 }(React.Component);
 
 quip.elements.initialize({
-  initializationCallback: function initializationCallback(root) {
-    ReactDOM.render(React.createElement(Root, null), root);
-  }
+    initializationCallback: function initializationCallback(root) {
+        ReactDOM.render(React.createElement(Root, null), root);
+    }
 });
 
 /***/ })
