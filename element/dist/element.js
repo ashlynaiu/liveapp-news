@@ -108,9 +108,11 @@ var Root = function (_React$Component) {
 
         _this.toggleInput = _this.toggleInput.bind(_this);
         _this.handleSubmit = _this.handleSubmit.bind(_this);
+        _this.handleUpdate = _this.handleUpdate.bind(_this);
         _this.state = {
             news: null,
             ticker: 'CRM',
+            tickerStorage: '',
             close: null,
             open: null,
             priceChange: null,
@@ -259,12 +261,21 @@ var Root = function (_React$Component) {
             });
         }
     }, {
+        key: 'handleUpdate',
+        value: function handleUpdate(event) {
+            console.log(event);
+            this.setState({ tickerStorage: event.target.value });
+        }
+    }, {
         key: 'handleSubmit',
-        value: function handleSubmit(event) {
-            console.log('try');
-            console.log(event.target);
-            this.setState({ ticker: event.target.value });
-            console.log(this.state.ticker);
+        value: function handleSubmit() {
+            if (this.state.tickerStorage) {
+                this.setState({ ticker: this.state.tickerStorage });
+                this.fetchDetails(this.state.tickerStorage);
+                this.fetchNews(this.state.tickerStorage);
+                this.toggleInput();
+                this.setState({ tickerStorage: '' });
+            }
         }
     }, {
         key: 'toggleInput',
@@ -281,7 +292,8 @@ var Root = function (_React$Component) {
                     React.createElement(
                         'div',
                         { className: _root2.default.newsInput },
-                        React.createElement('input', { placeholder: 'Change Ticker' }),
+                        React.createElement('input', { placeholder: 'Change Ticker',
+                            value: this.state.tickerStorage, onChange: this.handleUpdate }),
                         React.createElement(
                             'button',
                             { onClick: this.handleSubmit },

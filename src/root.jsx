@@ -7,9 +7,11 @@ class Root extends React.Component {
         super(props);
         this.toggleInput = this.toggleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
         this.state = {
             news: null,
             ticker: 'CRM',
+            tickerStorage: '',
             close: null,
             open: null,
             priceChange: null,
@@ -128,11 +130,19 @@ class Root extends React.Component {
         )
     }
 
-    handleSubmit(event) {
-        console.log('try');
-        console.log(event.target);
-        this.setState({ticker: event.target.value});
-        console.log(this.state.ticker);
+    handleUpdate(event) {
+        console.log(event)
+        this.setState({tickerStorage: event.target.value})
+    }
+
+    handleSubmit() {
+        if (this.state.tickerStorage) {
+            this.setState({ticker: this.state.tickerStorage})
+            this.fetchDetails(this.state.tickerStorage)
+            this.fetchNews(this.state.tickerStorage)
+            this.toggleInput();
+            this.setState({ tickerStorage: '' })
+        }
     }
 
     toggleInput() {
@@ -144,8 +154,9 @@ class Root extends React.Component {
             return (
                 <div>
                     <div className={Styles.newsInput}>
-                      <input placeholder="Change Ticker" />
-                      <button onClick={this.handleSubmit}>Change</button>
+                        <input placeholder="Change Ticker"
+                        value={this.state.tickerStorage} onChange={this.handleUpdate} />
+                        <button onClick={this.handleSubmit}>Change</button>
                     </div>
                     <a onClick={this.toggleInput}>Close</a>
                 </div>
