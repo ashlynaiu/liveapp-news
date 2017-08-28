@@ -42,7 +42,7 @@ class Root extends React.Component {
             })
         })
         .catch(err => {
-            this.setState({error:[...this.state.error, error]})
+            this.setState({ error: [...this.state.error, err] });
         })
     }
 
@@ -62,6 +62,7 @@ class Root extends React.Component {
             })
     }
 
+    //Calculate the article's time since published
     timeSince(date) {
         let seconds = Math.floor((new Date() - new Date(date)) / 1000)
 
@@ -116,6 +117,7 @@ class Root extends React.Component {
         return interval + ' seconds ago'
     }
 
+    //Render the tickerNews
     tickerNews() {
         return this.state.news.map((article, index) =>
             <div className={Styles.newsContainer} key={index}>
@@ -130,6 +132,11 @@ class Root extends React.Component {
         )
     }
 
+    //Input component functions
+    toggleInput() {
+        return this.state.inputShow ? this.setState({ inputShow : false }) : this.setState({ inputShow : true });
+    }
+
     handleUpdate(event) {
         this.setState({tickerStorage: event.target.value})
     }
@@ -141,13 +148,11 @@ class Root extends React.Component {
             this.fetchNews(this.state.tickerStorage)
             this.toggleInput();
             this.setState({ tickerStorage: '' })
+            //TODO: Handle an error state when ticker isn't valid
         }
     }
 
-    toggleInput() {
-        return this.state.inputShow ? this.setState({ inputShow : false }) : this.setState({ inputShow : true });
-    }
-
+    //Render the input
     tickerInput() {
         if(this.state.inputShow) {
             return (
@@ -166,15 +171,35 @@ class Root extends React.Component {
         }
     }
 
-    render() {
+    tickerDetails() {
+
+        let priceChangeStatus = this.state.priceChange < 0 ? Styles.statusDown : Styles.statusUp;
+
         return (
-          <div className={Styles.news}>
             <div className={Styles.details}>
                 <h3>{this.state.ticker}</h3>
-                <div className={Styles.priceChange}>
+                <div className={`${priceChangeStatus} ${Styles.priceChange}`}>
                     {this.state.priceChange}
                 </div>
             </div>
+        )
+    }
+    //Render APP
+    render() {
+        return (
+          <div className={Styles.news}>
+            {this.state.priceChange ? this.tickerDetails() : null}
+            <div className={Styles.myBook}>
+                <div className={Styles.leftColumn}>
+                    <span className={Styles.label}>Clients Affected</span>
+                    <h4>60%</h4>
+                </div>
+                <div className={Styles.rightColumn}>
+                    <span className={Styles.label}>Total AUM</span>
+                    <h4>$2,130,000</h4>
+                </div>
+            </div>
+            <span className={Styles.label}>Recent {this.state.ticker} News</span>
             {this.state.news ? this.tickerNews() : null}
             {this.tickerInput()}
           </div>

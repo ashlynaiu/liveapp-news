@@ -20,7 +20,7 @@
   width: 400px;
   white-space: nowrap;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 
   &:first-child {
     margin-top: 24px;
@@ -41,17 +41,52 @@
   padding-bottom: 24px;
   border-bottom: 1px solid #A8B7C7;
   justify-content: space-between;
+
   h3 {
-    font-size: 18px;
+    font-size: 24px;
     align-self: center;
   }
+
   span {
     color: #54698D;
   }
+
   .priceChange {
     background-color: #C23934;
     color: #fff;
     padding: 8px 16px;
     border-radius: 4px;
   }
+
+  .statusDown {
+    background-color: #C23934;
+  }
+
+  .statusUp {
+    background-color: #4BCA81;
+  }
+}
+
+.myBook {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 24px;
+
+  h4 {
+    font-weight: normal;
+    font-size: 18px;
+  }
+
+  .rightColumn {
+    text-align: right;
+  }
+}
+
+span.label {
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #54698D;
 }

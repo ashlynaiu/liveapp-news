@@ -71,7 +71,7 @@
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH"};
+module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH","statusDown":"_31IPUlBZ_uEzKoUoF6sUJR","statusUp":"_1_6_qmXCKDzYQO7sZsfZOg","myBook":"_3DVh3MLswjZefuyrVBl-P0","rightColumn":"_2hBBA2kFVQqpgHh4eailtM","label":"_2XTaHLy_sm9L3H0yspMQx7"};
 
 /***/ }),
 /* 1 */
@@ -151,7 +151,7 @@ var Root = function (_React$Component) {
                     priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
                 });
             }).catch(function (err) {
-                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [error]) });
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
             });
         }
     }, {
@@ -173,6 +173,9 @@ var Root = function (_React$Component) {
                 _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [error]) });
             });
         }
+
+        //Calculate the article's time since published
+
     }, {
         key: 'timeSince',
         value: function timeSince(date) {
@@ -228,6 +231,9 @@ var Root = function (_React$Component) {
 
             return interval + ' seconds ago';
         }
+
+        //Render the tickerNews
+
     }, {
         key: 'tickerNews',
         value: function tickerNews() {
@@ -260,6 +266,14 @@ var Root = function (_React$Component) {
                 );
             });
         }
+
+        //Input component functions
+
+    }, {
+        key: 'toggleInput',
+        value: function toggleInput() {
+            return this.state.inputShow ? this.setState({ inputShow: false }) : this.setState({ inputShow: true });
+        }
     }, {
         key: 'handleUpdate',
         value: function handleUpdate(event) {
@@ -274,13 +288,12 @@ var Root = function (_React$Component) {
                 this.fetchNews(this.state.tickerStorage);
                 this.toggleInput();
                 this.setState({ tickerStorage: '' });
+                //TODO: Handle an error state when ticker isn't valid
             }
         }
-    }, {
-        key: 'toggleInput',
-        value: function toggleInput() {
-            return this.state.inputShow ? this.setState({ inputShow: false }) : this.setState({ inputShow: true });
-        }
+
+        //Render the input
+
     }, {
         key: 'tickerInput',
         value: function tickerInput() {
@@ -314,24 +327,73 @@ var Root = function (_React$Component) {
             }
         }
     }, {
+        key: 'tickerDetails',
+        value: function tickerDetails() {
+
+            var priceChangeStatus = this.state.priceChange < 0 ? _root2.default.statusDown : _root2.default.statusUp;
+
+            return React.createElement(
+                'div',
+                { className: _root2.default.details },
+                React.createElement(
+                    'h3',
+                    null,
+                    this.state.ticker
+                ),
+                React.createElement(
+                    'div',
+                    { className: priceChangeStatus + ' ' + _root2.default.priceChange },
+                    this.state.priceChange
+                )
+            );
+        }
+        //Render APP
+
+    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
                 'div',
                 { className: _root2.default.news },
+                this.state.priceChange ? this.tickerDetails() : null,
                 React.createElement(
                     'div',
-                    { className: _root2.default.details },
+                    { className: _root2.default.myBook },
                     React.createElement(
-                        'h3',
-                        null,
-                        this.state.ticker
+                        'div',
+                        { className: _root2.default.leftColumn },
+                        React.createElement(
+                            'span',
+                            { className: _root2.default.label },
+                            'Clients Affected'
+                        ),
+                        React.createElement(
+                            'h4',
+                            null,
+                            '60%'
+                        )
                     ),
                     React.createElement(
                         'div',
-                        { className: _root2.default.priceChange },
-                        this.state.priceChange
+                        { className: _root2.default.rightColumn },
+                        React.createElement(
+                            'span',
+                            { className: _root2.default.label },
+                            'Total AUM'
+                        ),
+                        React.createElement(
+                            'h4',
+                            null,
+                            '$2,130,000'
+                        )
                     )
+                ),
+                React.createElement(
+                    'span',
+                    { className: _root2.default.label },
+                    'Recent ',
+                    this.state.ticker,
+                    ' News'
                 ),
                 this.state.news ? this.tickerNews() : null,
                 this.tickerInput()
