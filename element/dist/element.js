@@ -263,7 +263,6 @@ var Root = function (_React$Component) {
     }, {
         key: 'handleUpdate',
         value: function handleUpdate(event) {
-            console.log(event);
             this.setState({ tickerStorage: event.target.value });
         }
     }, {

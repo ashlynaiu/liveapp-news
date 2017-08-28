@@ -131,7 +131,6 @@ class Root extends React.Component {
     }
 
     handleUpdate(event) {
-        console.log(event)
         this.setState({tickerStorage: event.target.value})
     }
 
