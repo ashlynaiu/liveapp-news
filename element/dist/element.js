@@ -71,7 +71,7 @@
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM"};
+module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH"};
 
 /***/ }),
 /* 1 */
@@ -106,12 +106,15 @@ var Root = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props));
 
+        _this.toggleInput = _this.toggleInput.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.state = {
             news: null,
             ticker: 'CRM',
             close: null,
             open: null,
             priceChange: null,
+            inputShow: false,
             error: []
         };
         return _this;
@@ -164,7 +167,6 @@ var Root = function (_React$Component) {
                 return response.json();
             }).then(function (json) {
                 _this3.setState({ news: json.value });
-                console.log(_this3.state.news);
             }).catch(function (error) {
                 _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [error]) });
             });
@@ -245,31 +247,83 @@ var Root = function (_React$Component) {
                     React.createElement(
                         'div',
                         null,
-                        article.provider[0].name,
-                        ' | ',
-                        _this4.timeSince(article.datePublished)
+                        React.createElement(
+                            'span',
+                            null,
+                            article.provider[0].name,
+                            ' | ',
+                            _this4.timeSince(article.datePublished)
+                        )
                     )
                 );
             });
         }
     }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            console.log('try');
+            console.log(event.target);
+            this.setState({ ticker: event.target.value });
+            console.log(this.state.ticker);
+        }
+    }, {
+        key: 'toggleInput',
+        value: function toggleInput() {
+            return this.state.inputShow ? this.setState({ inputShow: false }) : this.setState({ inputShow: true });
+        }
+    }, {
+        key: 'tickerInput',
+        value: function tickerInput() {
+            if (this.state.inputShow) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'div',
+                        { className: _root2.default.newsInput },
+                        React.createElement('input', { placeholder: 'Change Ticker' }),
+                        React.createElement(
+                            'button',
+                            { onClick: this.handleSubmit },
+                            'Change'
+                        )
+                    ),
+                    React.createElement(
+                        'a',
+                        { onClick: this.toggleInput },
+                        'Close'
+                    )
+                );
+            } else {
+                return React.createElement(
+                    'a',
+                    { onClick: this.toggleInput },
+                    'Change Ticker Symbol'
+                );
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
-
             return React.createElement(
                 'div',
                 { className: _root2.default.news },
                 React.createElement(
                     'div',
-                    { className: _root2.default.newsInput },
-                    React.createElement('input', { placeholder: 'Add Ticker' }),
+                    { className: _root2.default.details },
                     React.createElement(
-                        'button',
+                        'h3',
                         null,
-                        'Submit'
+                        this.state.ticker
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: _root2.default.priceChange },
+                        this.state.priceChange
                     )
                 ),
-                this.state.news ? this.tickerNews() : null
+                this.state.news ? this.tickerNews() : null,
+                this.tickerInput()
             );
         }
     }]);

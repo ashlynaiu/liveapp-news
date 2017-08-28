@@ -1,5 +1,10 @@
 .news {
   width: 400px;
+
+  a {
+    color: #1ba2e3;
+    cursor: pointer;
+  }
 }
 .newsInput {
   display: flex;
@@ -15,9 +20,10 @@
   width: 400px;
   white-space: nowrap;
   overflow: hidden;
+  margin-bottom: 16px;
 
-  &:not(:last-child) {
-    margin-bottom: 15px;
+  &:first-child {
+    margin-top: 24px;
   }
 
   .truncate {
@@ -27,8 +33,25 @@
     text-overflow: ellipsis;
     color: #1ba2e3;
   }
+}
 
-  h4 a {
-    color: #1ba2e3;
+.details {
+  display: flex;
+  margin: 24px 0;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #A8B7C7;
+  justify-content: space-between;
+  h3 {
+    font-size: 18px;
+    align-self: center;
+  }
+  span {
+    color: #54698D;
+  }
+  .priceChange {
+    background-color: #C23934;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
   }
 }

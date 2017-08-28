@@ -4,13 +4,16 @@ import Styles from "./root.less";
 
 class Root extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
+        this.toggleInput = this.toggleInput.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
             news: null,
             ticker: 'CRM',
             close: null,
             open: null,
             priceChange: null,
+            inputShow: false,
             error: []
         }
     }
@@ -51,7 +54,6 @@ class Root extends React.Component {
         fetch(`${search_url}?q=$${ticker}+stock&sortby=date&count=3`, {headers: fetchHeaders}).then(response => response.json())
             .then(json => {
                 this.setState({news: json.value})
-                console.log(this.state.news)
             })
             .catch(error => {
                 this.setState({error:[...this.state.error, error]})
@@ -118,20 +120,53 @@ class Root extends React.Component {
                 <h4 className={Styles.truncate}>
                     <a href={article.url} target="_blank">{article.name}</a>
                 </h4>
-                <div>{article.provider[0].name} | {this.timeSince(article.datePublished)}</div>
+                <div>
+                    <span>{article.provider[0].name} | {this.timeSince(article.datePublished)}
+                    </span>
+                </div>
             </div>
         )
     }
 
-    render() {
+    handleSubmit(event) {
+        console.log('try');
+        console.log(event.target);
+        this.setState({ticker: event.target.value});
+        console.log(this.state.ticker);
+    }
 
+    toggleInput() {
+        return this.state.inputShow ? this.setState({ inputShow : false }) : this.setState({ inputShow : true });
+    }
+
+    tickerInput() {
+        if(this.state.inputShow) {
+            return (
+                <div>
+                    <div className={Styles.newsInput}>
+                      <input placeholder="Change Ticker" />
+                      <button onClick={this.handleSubmit}>Change</button>
+                    </div>
+                    <a onClick={this.toggleInput}>Close</a>
+                </div>
+            )
+        }
+        else {
+            return ( <a onClick={this.toggleInput}>Change Ticker Symbol</a> );
+        }
+    }
+
+    render() {
         return (
           <div className={Styles.news}>
-            <div className={Styles.newsInput}>
-              <input placeholder="Add Ticker"/>
-              <button>Submit</button>
+            <div className={Styles.details}>
+                <h3>{this.state.ticker}</h3>
+                <div className={Styles.priceChange}>
+                    {this.state.priceChange}
+                </div>
             </div>
             {this.state.news ? this.tickerNews() : null}
+            {this.tickerInput()}
           </div>
         );
     }
