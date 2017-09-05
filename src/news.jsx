@@ -35,7 +35,6 @@ class News extends React.Component {
             .catch(error => {
                 this.setState({error:[...this.state.error, error]})
             })
-        console.log(this.state.news)
     }
 
     //Calculate the article's time since published
@@ -110,6 +109,7 @@ class News extends React.Component {
     render() {
         return (
             <div>
+                <span className={Styles.label}>Recent {this.state.ticker} News</span>
                 {this.state.news ? this.tickerNews() : null}
             </div>
         )

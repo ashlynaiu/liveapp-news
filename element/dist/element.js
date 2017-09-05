@@ -147,7 +147,6 @@ var News = function (_React$Component) {
             }).catch(function (error) {
                 _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [error]) });
             });
-            console.log(this.state.news);
         }
 
         //Calculate the article's time since published
@@ -245,6 +244,13 @@ var News = function (_React$Component) {
             return React.createElement(
                 'div',
                 null,
+                React.createElement(
+                    'span',
+                    { className: _root2.default.label },
+                    'Recent ',
+                    this.state.ticker,
+                    ' News'
+                ),
                 this.state.news ? this.tickerNews() : null
             );
         }
@@ -537,13 +543,15 @@ var _tickerDetails = __webpack_require__(3);
 
 var _tickerDetails2 = _interopRequireDefault(_tickerDetails);
 
+var _tickerChanger = __webpack_require__(14);
+
+var _tickerChanger2 = _interopRequireDefault(_tickerChanger);
+
 var _root = __webpack_require__(0);
 
 var _root2 = _interopRequireDefault(_root);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -559,10 +567,7 @@ var Root = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props));
 
-        _this.toggleInput = _this.toggleInput.bind(_this);
-        _this.handleSubmit = _this.handleSubmit.bind(_this);
-        _this.handleUpdate = _this.handleUpdate.bind(_this);
-        _this.fetchAccountTicker = _this.fetchAccountTicker.bind(_this);
+        _this.updateTicker = _this.updateTicker.bind(_this);
         _this.state = {
             ticker: 'CRM',
             tickerStorage: '',
@@ -574,165 +579,9 @@ var Root = function (_React$Component) {
     }
 
     _createClass(Root, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {
-            var ticker = this.state.ticker;
-            this.fetchNews(ticker);
-            this.fetchAccounts();
-        }
-    }, {
-        key: "fetchAccounts",
-        value: function fetchAccounts() {
-            var _this2 = this;
-
-            var sfClient = new _service.SalesforceClient();
-            sfClient.fetchRecordTypeData("Account").then(function (response) {
-                var records = response.records;
-                _this2.setState({ records: records });
-            }).catch(function (error) {
-                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
-            });
-        }
-    }, {
-        key: "fetchAccountTicker",
-        value: function fetchAccountTicker(event) {
-            var _this3 = this;
-
-            var accountID = event.target.value;
-            var sfClient = new _service.SalesforceClient();
-            sfClient.fetchRecord(accountID).then(function (response) {
-                var record = response.results[0].result.fields.TickerSymbol.value;
-                _this3.setState({ ticker: record });
-            }).catch(function (error) {
-                _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [err]) });
-            });
-            this.toggleInput();
-        }
-    }, {
-        key: "fetchNews",
-        value: function fetchNews(ticker) {
-            var _this4 = this;
-
-            var api_key = '60c438deac3f44ee98d47227f06193e1';
-            var search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search';
-            var fetchHeaders = {
-                'Ocp-Apim-Subscription-Key': "" + api_key
-            };
-
-            fetch(search_url + "?q=$" + ticker + "+stock&sortby=date&count=3", { headers: fetchHeaders }).then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                _this4.setState({ news: json.value });
-            }).catch(function (error) {
-                _this4.setState({ error: [].concat(_toConsumableArray(_this4.state.error), [error]) });
-            });
-        }
-
-        //Input component functions
-
-    }, {
-        key: "toggleInput",
-        value: function toggleInput() {
-            return this.state.inputShow ? this.setState({ inputShow: false }) : this.setState({ inputShow: true });
-        }
-    }, {
-        key: "handleUpdate",
-        value: function handleUpdate(event) {
-            this.setState({ tickerStorage: event.target.value });
-        }
-    }, {
-        key: "handleSubmit",
-        value: function handleSubmit() {
-            if (this.state.tickerStorage) {
-                this.setState({ ticker: this.state.tickerStorage });
-                // this.fetchDetails(this.state.tickerStorage)
-                this.fetchNews(this.state.tickerStorage);
-                this.toggleInput();
-                this.setState({ tickerStorage: '' });
-                //TODO: Handle an error state when ticker isn't valid
-            }
-        }
-
-        //Render the input
-
-    }, {
-        key: "tickerInput",
-        value: function tickerInput() {
-            if (this.state.inputShow) {
-                return React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: _root2.default.newsInput },
-                        React.createElement("input", { placeholder: "Change Ticker",
-                            value: this.state.tickerStorage, onChange: this.handleUpdate }),
-                        React.createElement(
-                            "button",
-                            { onClick: this.handleSubmit },
-                            "Change"
-                        )
-                    ),
-                    React.createElement(
-                        "a",
-                        { onClick: this.toggleInput },
-                        "Close"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: _root2.default.selectAccount },
-                        this.state.records ? this.selectAccountTicker() : null
-                    )
-                );
-            } else {
-                return React.createElement(
-                    "a",
-                    { onClick: this.toggleInput },
-                    "Change Ticker Symbol"
-                );
-            }
-        }
-    }, {
-        key: "selectAccountTicker",
-        value: function selectAccountTicker() {
-            var _this5 = this;
-
-            var options = function options() {
-                return _this5.state.records.map(function (record, index) {
-                    return React.createElement(
-                        "option",
-                        { key: index, value: record.Id },
-                        record.Name
-                    );
-                });
-            };
-            return React.createElement(
-                "div",
-                { "class": "slds-form-element" },
-                React.createElement(
-                    "label",
-                    { "class": "slds-form-element__label", "for": "select-01" },
-                    "Select An Account"
-                ),
-                React.createElement(
-                    "div",
-                    { "class": "slds-form-element__control" },
-                    React.createElement(
-                        "div",
-                        { "class": "slds-select_container" },
-                        React.createElement(
-                            "select",
-                            { "class": "slds-select", id: "select-01", onChange: this.fetchAccountTicker },
-                            React.createElement(
-                                "option",
-                                null,
-                                "Select Option"
-                            ),
-                            options()
-                        )
-                    )
-                )
-            );
+        key: "updateTicker",
+        value: function updateTicker(newTicker) {
+            this.setState({ ticker: newTicker });
         }
 
         //Render APP
@@ -776,15 +625,8 @@ var Root = function (_React$Component) {
                         )
                     )
                 ),
-                React.createElement(
-                    "span",
-                    { className: _root2.default.label },
-                    "Recent ",
-                    this.state.ticker,
-                    " News"
-                ),
                 React.createElement(_news2.default, { ticker: this.state.ticker }),
-                this.tickerInput()
+                React.createElement(_tickerChanger2.default, { updateTicker: this.updateTicker })
             );
         }
     }]);
@@ -798,6 +640,226 @@ quip.elements.initialize({
         ReactDOM.render(React.createElement(Root, null), root);
     }
 });
+
+/***/ }),
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _service = __webpack_require__(2);
+
+var _root = __webpack_require__(0);
+
+var _root2 = _interopRequireDefault(_root);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TickerChanger = function (_React$Component) {
+    _inherits(TickerChanger, _React$Component);
+
+    function TickerChanger(props) {
+        _classCallCheck(this, TickerChanger);
+
+        var _this = _possibleConstructorReturn(this, (TickerChanger.__proto__ || Object.getPrototypeOf(TickerChanger)).call(this, props));
+
+        _this.toggleInput = _this.toggleInput.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        _this.handleUpdate = _this.handleUpdate.bind(_this);
+        _this.fetchAccountTicker = _this.fetchAccountTicker.bind(_this);
+        _this.state = {
+            tickerStorage: '',
+            inputShow: false,
+            records: [],
+            error: []
+        };
+        return _this;
+    }
+
+    _createClass(TickerChanger, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var ticker = this.state.ticker;
+            this.fetchAccounts();
+        }
+    }, {
+        key: "fetchAccounts",
+        value: function fetchAccounts() {
+            var _this2 = this;
+
+            var sfClient = new _service.SalesforceClient();
+            sfClient.fetchRecordTypeData("Account").then(function (response) {
+                var records = response.records;
+                _this2.setState({ records: records });
+            }).catch(function (error) {
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
+            });
+        }
+    }, {
+        key: "fetchAccountTicker",
+        value: function fetchAccountTicker(event) {
+            var _this3 = this;
+
+            var accountID = event.target.value;
+            var sfClient = new _service.SalesforceClient();
+            sfClient.fetchRecord(accountID).then(function (response) {
+                var record = response.results[0].result.fields.TickerSymbol.value;
+                _this3.props.updateTicker(record);
+            }).catch(function (error) {
+                _this3.setState({ error: [].concat(_toConsumableArray(_this3.state.error), [err]) });
+            });
+            this.toggleInput();
+        }
+
+        //Input component functions
+
+    }, {
+        key: "toggleInput",
+        value: function toggleInput() {
+            return this.state.inputShow ? this.setState({ inputShow: false }) : this.setState({ inputShow: true });
+        }
+    }, {
+        key: "handleUpdate",
+        value: function handleUpdate(event) {
+            this.setState({ tickerStorage: event.target.value });
+        }
+    }, {
+        key: "handleSubmit",
+        value: function handleSubmit() {
+            if (this.state.tickerStorage) {
+                this.props.updateTicker(this.state.tickerStorage);
+                this.toggleInput();
+                this.setState({ tickerStorage: '' });
+                //TODO: Handle an error state when ticker isn't valid
+            }
+        }
+
+        //Account Ticker Selector Render
+
+    }, {
+        key: "selectAccountTicker",
+        value: function selectAccountTicker() {
+            var _this4 = this;
+
+            var options = function options() {
+                return _this4.state.records.map(function (record, index) {
+                    return React.createElement(
+                        "option",
+                        { key: index, value: record.Id },
+                        record.Name
+                    );
+                });
+            };
+            return React.createElement(
+                "div",
+                { "class": "slds-form-element" },
+                React.createElement(
+                    "label",
+                    { "class": "slds-form-element__label", "for": "select-01" },
+                    "Select An Account"
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "slds-form-element__control" },
+                    React.createElement(
+                        "div",
+                        { "class": "slds-select_container" },
+                        React.createElement(
+                            "select",
+                            { "class": "slds-select", id: "select-01", onChange: this.fetchAccountTicker },
+                            React.createElement(
+                                "option",
+                                null,
+                                "Select Option"
+                            ),
+                            options()
+                        )
+                    )
+                )
+            );
+        }
+
+        //Render the input
+
+    }, {
+        key: "tickerInput",
+        value: function tickerInput() {
+            if (this.state.inputShow) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: _root2.default.newsInput },
+                        React.createElement("input", { placeholder: "Change Ticker",
+                            value: this.state.tickerStorage, onChange: this.handleUpdate }),
+                        React.createElement(
+                            "button",
+                            { onClick: this.handleSubmit },
+                            "Change"
+                        )
+                    ),
+                    React.createElement(
+                        "a",
+                        { onClick: this.toggleInput },
+                        "Close"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: _root2.default.selectAccount },
+                        this.state.records ? this.selectAccountTicker() : null
+                    )
+                );
+            } else {
+                return React.createElement(
+                    "a",
+                    { onClick: this.toggleInput },
+                    "Change Ticker Symbol"
+                );
+            }
+        }
+
+        //Render APP
+
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                this.tickerInput()
+            );
+        }
+    }]);
+
+    return TickerChanger;
+}(React.Component);
+
+exports.default = TickerChanger;
 
 /***/ })
 /******/ ]);

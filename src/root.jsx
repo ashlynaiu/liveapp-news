@@ -1,15 +1,13 @@
 import {SalesforceClient} from "./service.jsx";
 import News from "./news.jsx";
 import TickerDetails from "./tickerDetails.jsx";
+import TickerChanger from "./tickerChanger.jsx";
 import Styles from "./root.less";
 
 class Root extends React.Component {
     constructor(props) {
         super(props);
-        this.toggleInput = this.toggleInput.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
-        this.fetchAccountTicker = this.fetchAccountTicker.bind(this);
+        this.updateTicker = this.updateTicker.bind(this);
         this.state = {
             ticker: 'CRM',
             tickerStorage: '',
@@ -19,113 +17,8 @@ class Root extends React.Component {
         }
     }
 
-    componentDidMount() {
-        let ticker = this.state.ticker;
-        this.fetchNews(ticker);
-        this.fetchAccounts();
-    }
-
-    fetchAccounts() {
-        let sfClient = new SalesforceClient()
-        sfClient.fetchRecordTypeData("Account")
-        .then(response => {
-            let records = response.records
-            this.setState({records: records});
-        })
-        .catch(error => {
-            this.setState({ error: [...this.state.error, err] });
-        })
-    }
-
-    fetchAccountTicker(event) {
-        let accountID = event.target.value;
-        let sfClient = new SalesforceClient();
-        sfClient.fetchRecord(accountID)
-        .then(response => {
-            let record = response.results[0].result.fields.TickerSymbol.value
-            this.setState({ticker: record});
-        })
-        .catch(error => {
-            this.setState({ error: [...this.state.error, err] });
-        })
-        this.toggleInput();
-    }
-
-    fetchNews(ticker) {
-        const api_key = '60c438deac3f44ee98d47227f06193e1'
-        const search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search'
-        const fetchHeaders = {
-            'Ocp-Apim-Subscription-Key': `${api_key}`
-        }
-
-        fetch(`${search_url}?q=$${ticker}+stock&sortby=date&count=3`, {headers: fetchHeaders}).then(response => response.json())
-            .then(json => {
-                this.setState({news: json.value})
-            })
-            .catch(error => {
-                this.setState({error:[...this.state.error, error]})
-            })
-    }
-
-    //Input component functions
-    toggleInput() {
-        return this.state.inputShow ? this.setState({ inputShow : false }) : this.setState({ inputShow : true });
-    }
-
-    handleUpdate(event) {
-        this.setState({tickerStorage: event.target.value})
-    }
-
-    handleSubmit() {
-        if (this.state.tickerStorage) {
-            this.setState({ticker: this.state.tickerStorage})
-            // this.fetchDetails(this.state.tickerStorage)
-            this.fetchNews(this.state.tickerStorage)
-            this.toggleInput();
-            this.setState({ tickerStorage: '' })
-            //TODO: Handle an error state when ticker isn't valid
-        }
-    }
-
-    //Render the input
-    tickerInput() {
-        if(this.state.inputShow) {
-            return (
-                <div>
-                    <div className={Styles.newsInput}>
-                        <input placeholder="Change Ticker"
-                        value={this.state.tickerStorage} onChange={this.handleUpdate} />
-                        <button onClick={this.handleSubmit}>Change</button>
-                    </div>
-                    <a onClick={this.toggleInput}>Close</a>
-                    <div className={Styles.selectAccount}>
-                        {this.state.records ? this.selectAccountTicker() : null}
-                    </div>
-                </div>
-            )
-        }
-        else {
-            return ( <a onClick={this.toggleInput}>Change Ticker Symbol</a> );
-        }
-    }
-
-    selectAccountTicker() {
-        let options = () => {
-            return ( this.state.records.map((record, index) => <option key={index} value={record.Id}>{record.Name}</option> ))
-        }
-        return (
-            <div class="slds-form-element">
-                <label class="slds-form-element__label" for="select-01">Select An Account</label>
-                <div class="slds-form-element__control">
-                    <div class="slds-select_container">
-                        <select class="slds-select" id="select-01" onChange={this.fetchAccountTicker}>
-                            <option>Select Option</option>
-                            {options()}
-                      </select>
-                    </div>
-                </div>
-            </div>
-        )
+    updateTicker(newTicker) {
+        this.setState({ticker: newTicker})
     }
 
     //Render APP
@@ -143,9 +36,8 @@ class Root extends React.Component {
                     <h4>$2,130,000</h4>
                 </div>
             </div>
-            <span className={Styles.label}>Recent {this.state.ticker} News</span>
             <News ticker={this.state.ticker}></News>
-            {this.tickerInput()}
+            <TickerChanger updateTicker={this.updateTicker}></TickerChanger>
           </div>
         );
     }
