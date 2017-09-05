@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,11 +73,171 @@
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _service = __webpack_require__(1);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _root = __webpack_require__(2);
+//import "whatwg-fetch";
+
+var DEV_LOCALLY = true;
+
+var INSTANCE_URL = "https://aaiu-dev-ed.my.salesforce.com";
+var BASE_URL = "services/data/v40.0";
+var URL = INSTANCE_URL + "/" + BASE_URL;
+
+var OBJECT_INFO_ENDPOINT = "ui-api/object-info";
+
+var RECORDS_ENDPOINT = "ui-api/records";
+var RECORDS_BATCH_ENDPOINT = "ui-api/records/batch";
+
+var SOQL_ENDPOINT = "query";
+
+var ACCESS_TOKEN = "00Df4000001dlcK!ARkAQFyamQu4LVd1PEjl6OmIhzR727eYgzErpadDFzEC64Is.goFMwlVGXgBP8zOwI5eButkjR7hpfgJibraxYmgGiELSAg8";
+
+var SalesforceClient = exports.SalesforceClient = function () {
+    function SalesforceClient() {
+        _classCallCheck(this, SalesforceClient);
+    }
+
+    _createClass(SalesforceClient, [{
+        key: "toQueryString",
+        value: function toQueryString(params) {
+            var queryParams = [];
+            for (var key in params) {
+                queryParams.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
+            }
+            return queryParams.join("&");
+        }
+    }, {
+        key: "fetchListViewsData",
+        value: function fetchListViewsData(recordType) {
+            var url = URL + "/sobjects/" + recordType + "/listviews/";
+            return this.fetch(url, {});
+        }
+    }, {
+        key: "fetchListViewContent",
+        value: function fetchListViewContent(resultsUrl) {
+            var url = INSTANCE_URL + "/" + resultsUrl;
+            return this.fetch(url);
+        }
+    }, {
+        key: "fetchRecordTypeData",
+        value: function fetchRecordTypeData(recordType) {
+            var params = { q: "SELECT id, name from " + recordType };
+            var soqlUrl = URL + "/" + SOQL_ENDPOINT + "/";
+
+            return this.fetch(soqlUrl, params);
+        }
+    }, {
+        key: "fetchObjectInfo",
+        value: function fetchObjectInfo(recordType) {
+            var objectInfoUrl = URL + "/" + OBJECT_INFO_ENDPOINT + "/" + recordType;
+            return this.fetch(objectInfoUrl);
+        }
+    }, {
+        key: "fetchRecord",
+        value: function fetchRecord(recordId) {
+            return this.fetchRecords([recordId]);
+        }
+    }, {
+        key: "fetchRecords",
+        value: function fetchRecords(recordIds) {
+            var params = { layoutTypes: "Full" };
+            var recordsUrl = URL + "/" + RECORDS_BATCH_ENDPOINT + "/" + recordIds.join(",");
+            return this.fetch(recordsUrl, params);
+        }
+    }, {
+        key: "fetchRelatedInfo",
+        value: function fetchRelatedInfo(relatedType, attribute, condValue) {
+            var params = {
+                q: "SELECT id, name from " + relatedType + " WHERE " + attribute + "='" + condValue + "'"
+            };
+            var soqlUrl = URL + "/" + SOQL_ENDPOINT + "/";
+            return this.fetch(soqlUrl, params);
+        }
+    }, {
+        key: "fetch",
+        value: function (_fetch) {
+            function fetch(_x) {
+                return _fetch.apply(this, arguments);
+            }
+
+            fetch.toString = function () {
+                return _fetch.toString();
+            };
+
+            return fetch;
+        }(function (baseUrl) {
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var queryString = this.toQueryString(params);
+            var url = queryString ? baseUrl + "?" + queryString : baseUrl;
+            return fetch(url, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + ACCESS_TOKEN
+                }
+            }).then(function (response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response.json();
+            });
+        })
+    }, {
+        key: "update",
+        value: function update(recordId) {
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var url = URL + "/" + RECORDS_ENDPOINT + "/" + recordId;
+            var fields = {};
+            fields.fields = params;
+            var body = JSON.stringify(fields);
+            return fetch(url, {
+                method: "PATCH",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + ACCESS_TOKEN
+                },
+                body: body
+            }).then(function (response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response.json();
+            });
+        }
+    }]);
+
+    return SalesforceClient;
+}();
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH","statusDown":"_31IPUlBZ_uEzKoUoF6sUJR","statusUp":"_1_6_qmXCKDzYQO7sZsfZOg","myBook":"_3DVh3MLswjZefuyrVBl-P0","rightColumn":"_2hBBA2kFVQqpgHh4eailtM","label":"_2XTaHLy_sm9L3H0yspMQx7","selectAccount":"_1A1yfEwhtQ9NgnyhuPOuqP"};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _service = __webpack_require__(0);
+
+var _root = __webpack_require__(1);
 
 var _root2 = _interopRequireDefault(_root);
 
@@ -482,166 +642,6 @@ quip.elements.initialize({
         ReactDOM.render(React.createElement(Root, null), root);
     }
 });
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-//import "whatwg-fetch";
-
-var DEV_LOCALLY = true;
-
-var INSTANCE_URL = "https://aaiu-dev-ed.my.salesforce.com";
-var BASE_URL = "services/data/v40.0";
-var URL = INSTANCE_URL + "/" + BASE_URL;
-
-var OBJECT_INFO_ENDPOINT = "ui-api/object-info";
-
-var RECORDS_ENDPOINT = "ui-api/records";
-var RECORDS_BATCH_ENDPOINT = "ui-api/records/batch";
-
-var SOQL_ENDPOINT = "query";
-
-var ACCESS_TOKEN = "00Df4000001dlcK!ARkAQFyamQu4LVd1PEjl6OmIhzR727eYgzErpadDFzEC64Is.goFMwlVGXgBP8zOwI5eButkjR7hpfgJibraxYmgGiELSAg8";
-
-var SalesforceClient = exports.SalesforceClient = function () {
-    function SalesforceClient() {
-        _classCallCheck(this, SalesforceClient);
-    }
-
-    _createClass(SalesforceClient, [{
-        key: "toQueryString",
-        value: function toQueryString(params) {
-            var queryParams = [];
-            for (var key in params) {
-                queryParams.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
-            }
-            return queryParams.join("&");
-        }
-    }, {
-        key: "fetchListViewsData",
-        value: function fetchListViewsData(recordType) {
-            var url = URL + "/sobjects/" + recordType + "/listviews/";
-            return this.fetch(url, {});
-        }
-    }, {
-        key: "fetchListViewContent",
-        value: function fetchListViewContent(resultsUrl) {
-            var url = INSTANCE_URL + "/" + resultsUrl;
-            return this.fetch(url);
-        }
-    }, {
-        key: "fetchRecordTypeData",
-        value: function fetchRecordTypeData(recordType) {
-            var params = { q: "SELECT id, name from " + recordType };
-            var soqlUrl = URL + "/" + SOQL_ENDPOINT + "/";
-
-            return this.fetch(soqlUrl, params);
-        }
-    }, {
-        key: "fetchObjectInfo",
-        value: function fetchObjectInfo(recordType) {
-            var objectInfoUrl = URL + "/" + OBJECT_INFO_ENDPOINT + "/" + recordType;
-            return this.fetch(objectInfoUrl);
-        }
-    }, {
-        key: "fetchRecord",
-        value: function fetchRecord(recordId) {
-            return this.fetchRecords([recordId]);
-        }
-    }, {
-        key: "fetchRecords",
-        value: function fetchRecords(recordIds) {
-            var params = { layoutTypes: "Full" };
-            var recordsUrl = URL + "/" + RECORDS_BATCH_ENDPOINT + "/" + recordIds.join(",");
-            return this.fetch(recordsUrl, params);
-        }
-    }, {
-        key: "fetchRelatedInfo",
-        value: function fetchRelatedInfo(relatedType, attribute, condValue) {
-            var params = {
-                q: "SELECT id, name from " + relatedType + " WHERE " + attribute + "='" + condValue + "'"
-            };
-            var soqlUrl = URL + "/" + SOQL_ENDPOINT + "/";
-            return this.fetch(soqlUrl, params);
-        }
-    }, {
-        key: "fetch",
-        value: function (_fetch) {
-            function fetch(_x) {
-                return _fetch.apply(this, arguments);
-            }
-
-            fetch.toString = function () {
-                return _fetch.toString();
-            };
-
-            return fetch;
-        }(function (baseUrl) {
-            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var queryString = this.toQueryString(params);
-            var url = queryString ? baseUrl + "?" + queryString : baseUrl;
-            return fetch(url, {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + ACCESS_TOKEN
-                }
-            }).then(function (response) {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response.json();
-            });
-        })
-    }, {
-        key: "update",
-        value: function update(recordId) {
-            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var url = URL + "/" + RECORDS_ENDPOINT + "/" + recordId;
-            var fields = {};
-            fields.fields = params;
-            var body = JSON.stringify(fields);
-            return fetch(url, {
-                method: "PATCH",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + ACCESS_TOKEN
-                },
-                body: body
-            }).then(function (response) {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response.json();
-            });
-        }
-    }]);
-
-    return SalesforceClient;
-}();
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH","statusDown":"_31IPUlBZ_uEzKoUoF6sUJR","statusUp":"_1_6_qmXCKDzYQO7sZsfZOg","myBook":"_3DVh3MLswjZefuyrVBl-P0","rightColumn":"_2hBBA2kFVQqpgHh4eailtM","label":"_2XTaHLy_sm9L3H0yspMQx7","selectAccount":"_1A1yfEwhtQ9NgnyhuPOuqP"};
 
 /***/ })
 /******/ ]);
