@@ -8,6 +8,7 @@ class Root extends React.Component {
         this.toggleInput = this.toggleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.fetchAccountTicker = this.fetchAccountTicker.bind(this);
         this.state = {
             news: null,
             ticker: 'CRM',
@@ -33,11 +34,25 @@ class Root extends React.Component {
         sfClient.fetchRecordTypeData("Account")
         .then(response => {
             let records = response.records
-            this.setState({records: records})
+            this.setState({records: records});
         })
         .catch(error => {
             this.setState({ error: [...this.state.error, err] });
         })
+    }
+
+    fetchAccountTicker(event) {
+        let accountID = event.target.value;
+        let sfClient = new SalesforceClient();
+        sfClient.fetchRecord(accountID)
+        .then(response => {
+            let record = response.results[0].result.fields.TickerSymbol.value
+            this.setState({ticker: record});
+        })
+        .catch(error => {
+            this.setState({ error: [...this.state.error, err] });
+        })
+        this.toggleInput();
     }
 
     fetchDetails(ticker) {
@@ -177,6 +192,9 @@ class Root extends React.Component {
                         <button onClick={this.handleSubmit}>Change</button>
                     </div>
                     <a onClick={this.toggleInput}>Close</a>
+                    <div className={Styles.selectAccount}>
+                        {this.state.records ? this.selectAccountTicker() : null}
+                    </div>
                 </div>
             )
         }
@@ -198,10 +216,21 @@ class Root extends React.Component {
         )
     }
 
-    printSalesforceData() {
-        return this.state.records.map((record, index) =>
-            <div key={index}>
-                {record.Name}
+    selectAccountTicker() {
+        let options = () => {
+            return ( this.state.records.map((record, index) => <option key={index} value={record.Id}>{record.Name}</option> ))
+        }
+        return (
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="select-01">Select An Account</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" id="select-01" onChange={this.fetchAccountTicker}>
+                            <option>Select Option</option>
+                            {options()}
+                      </select>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -224,9 +253,6 @@ class Root extends React.Component {
             <span className={Styles.label}>Recent {this.state.ticker} News</span>
             {this.state.news ? this.tickerNews() : null}
             {this.tickerInput()}
-            <div>
-                {this.state.records ? this.printSalesforceData() : null}
-            </div>
           </div>
         );
     }

@@ -3,7 +3,7 @@
 const DEV_LOCALLY = true;
 
 const INSTANCE_URL = "https://aaiu-dev-ed.my.salesforce.com";
-const BASE_URL = "services/data/v20.0";
+const BASE_URL = "services/data/v40.0";
 const URL = `${INSTANCE_URL}/${BASE_URL}`;
 
 const OBJECT_INFO_ENDPOINT = "ui-api/object-info";
