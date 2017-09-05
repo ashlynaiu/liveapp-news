@@ -29,7 +29,6 @@ class News extends React.Component {
 
         fetch(`${search_url}?q=$${ticker}+stock&sortby=date&count=3`, {headers: fetchHeaders}).then(response => response.json())
             .then(json => {
-                console.log('setting state')
                 this.setState({news: json.value})
             })
             .catch(error => {

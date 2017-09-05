@@ -107,7 +107,6 @@ class TickerChanger extends React.Component {
         }
     }
 
-    //Render APP
     render() {
         return (
           <div>
