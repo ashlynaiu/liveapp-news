@@ -1,5 +1,6 @@
 // Copyright 2017 Quip
 import {SalesforceClient}from "./service.jsx"
+import TickerDetails from "./tickerDetails.jsx"
 import Styles from "./root.less";
 
 class Root extends React.Component {
@@ -13,19 +14,15 @@ class Root extends React.Component {
             news: null,
             ticker: 'CRM',
             tickerStorage: '',
-            close: null,
-            open: null,
-            priceChange: null,
             inputShow: false,
             records: [],
             error: []
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let ticker = this.state.ticker;
         this.fetchNews(ticker);
-        this.fetchDetails(ticker);
         this.fetchAccounts();
     }
 
@@ -53,26 +50,6 @@ class Root extends React.Component {
             this.setState({ error: [...this.state.error, err] });
         })
         this.toggleInput();
-    }
-
-    fetchDetails(ticker) {
-        fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${ticker}&apikey=AU2Q75AJK6FBD0KQ`).then(response => response.json())
-        .then(json => {
-            //Clean array
-            let cleanArray = Object.keys(json['Time Series (Daily)']).map((key) => { return json['Time Series (Daily)'][key]; });
-            //Save only today's and yesterday's details
-            let todayDetails = cleanArray[0];
-            let yesterdayDetails = cleanArray[1];
-
-            this.setState({
-                close: todayDetails["4. close"],
-                open: todayDetails["1. open"],
-                priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
-            })
-        })
-        .catch(err => {
-            this.setState({ error: [...this.state.error, err] });
-        })
     }
 
     fetchNews(ticker) {
@@ -173,7 +150,7 @@ class Root extends React.Component {
     handleSubmit() {
         if (this.state.tickerStorage) {
             this.setState({ticker: this.state.tickerStorage})
-            this.fetchDetails(this.state.tickerStorage)
+            // this.fetchDetails(this.state.tickerStorage)
             this.fetchNews(this.state.tickerStorage)
             this.toggleInput();
             this.setState({ tickerStorage: '' })
@@ -203,19 +180,6 @@ class Root extends React.Component {
         }
     }
 
-    tickerDetails() {
-        let priceChangeStatus = this.state.priceChange < 0 ? Styles.statusDown : Styles.statusUp;
-        let priceChange = this.state.priceChange < 0 ? this.state.priceChange : `+ ${this.state.priceChange}`
-        return (
-            <div className={Styles.details}>
-                <h3>{this.state.ticker}</h3>
-                <div className={`${priceChangeStatus} ${Styles.priceChange}`}>
-                    {priceChange}
-                </div>
-            </div>
-        )
-    }
-
     selectAccountTicker() {
         let options = () => {
             return ( this.state.records.map((record, index) => <option key={index} value={record.Id}>{record.Name}</option> ))
@@ -239,7 +203,7 @@ class Root extends React.Component {
     render() {
         return (
           <div className={Styles.news}>
-            {this.state.priceChange ? this.tickerDetails() : null}
+            <TickerDetails ticker={this.state.ticker}></TickerDetails>
             <div className={Styles.myBook}>
                 <div className={Styles.leftColumn}>
                     <span className={Styles.label}>Clients Affected</span>

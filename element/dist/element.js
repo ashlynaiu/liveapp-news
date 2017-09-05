@@ -66,8 +66,9 @@
 /******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -220,14 +221,130 @@ var SalesforceClient = exports.SalesforceClient = function () {
 }();
 
 /***/ }),
-/* 1 */
+
+/***/ 1:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwhIScaf","newsContainer":"_2G9IqEX8QmQBQoiXWRSzJY","truncate":"_3yQEETRaRRRH5T6uLam7nM","details":"_3Lffc8eoLpgx_3GWIc5TCY","priceChange":"_1i3ysy_yFq_F-ea1ZQd6nH","statusDown":"_31IPUlBZ_uEzKoUoF6sUJR","statusUp":"_1_6_qmXCKDzYQO7sZsfZOg","myBook":"_3DVh3MLswjZefuyrVBl-P0","rightColumn":"_2hBBA2kFVQqpgHh4eailtM","label":"_2XTaHLy_sm9L3H0yspMQx7","selectAccount":"_1A1yfEwhtQ9NgnyhuPOuqP"};
 
 /***/ }),
-/* 2 */
+
+/***/ 12:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _root = __webpack_require__(1);
+
+var _root2 = _interopRequireDefault(_root);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TickerDetails = function (_React$Component) {
+    _inherits(TickerDetails, _React$Component);
+
+    function TickerDetails(props) {
+        _classCallCheck(this, TickerDetails);
+
+        var _this = _possibleConstructorReturn(this, (TickerDetails.__proto__ || Object.getPrototypeOf(TickerDetails)).call(this, props));
+
+        _this.state = {
+            close: null,
+            open: null,
+            ticker: '',
+            priceChange: null,
+            error: []
+        };
+        return _this;
+    }
+
+    _createClass(TickerDetails, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var ticker = this.props.ticker;
+            this.fetchDetails(ticker);
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if (this.props.ticker !== nextProps.ticker) {
+                this.fetchDetails(nextProps.ticker);
+            }
+        }
+    }, {
+        key: 'fetchDetails',
+        value: function fetchDetails(ticker) {
+            var _this2 = this;
+
+            fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + ticker + '&apikey=AU2Q75AJK6FBD0KQ').then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                //Clean array
+                var cleanArray = Object.keys(json['Time Series (Daily)']).map(function (key) {
+                    return json['Time Series (Daily)'][key];
+                });
+                //Save only today's and yesterday's details
+                var todayDetails = cleanArray[0];
+                var yesterdayDetails = cleanArray[1];
+
+                _this2.setState({
+                    close: todayDetails["4. close"],
+                    open: todayDetails["1. open"],
+                    priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
+                });
+            }).catch(function (err) {
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
+            });
+        }
+
+        //Render APP
+
+    }, {
+        key: 'render',
+        value: function render() {
+            var priceChangeStatus = this.state.priceChange < 0 ? _root2.default.statusDown : _root2.default.statusUp;
+            var priceChange = this.state.priceChange < 0 ? this.state.priceChange : '+ ' + this.state.priceChange;
+            return React.createElement(
+                'div',
+                { className: _root2.default.details },
+                React.createElement(
+                    'h3',
+                    null,
+                    this.props.ticker
+                ),
+                React.createElement(
+                    'div',
+                    { className: priceChangeStatus + ' ' + _root2.default.priceChange },
+                    priceChange
+                )
+            );
+        }
+    }]);
+
+    return TickerDetails;
+}(React.Component);
+
+exports.default = TickerDetails;
+
+/***/ }),
+
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -236,6 +353,10 @@ module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwh
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _service = __webpack_require__(0);
+
+var _tickerDetails = __webpack_require__(12);
+
+var _tickerDetails2 = _interopRequireDefault(_tickerDetails);
 
 var _root = __webpack_require__(1);
 
@@ -268,9 +389,6 @@ var Root = function (_React$Component) {
             news: null,
             ticker: 'CRM',
             tickerStorage: '',
-            close: null,
-            open: null,
-            priceChange: null,
             inputShow: false,
             records: [],
             error: []
@@ -279,11 +397,10 @@ var Root = function (_React$Component) {
     }
 
     _createClass(Root, [{
-        key: "componentWillMount",
-        value: function componentWillMount() {
+        key: "componentDidMount",
+        value: function componentDidMount() {
             var ticker = this.state.ticker;
             this.fetchNews(ticker);
-            this.fetchDetails(ticker);
             this.fetchAccounts();
         }
     }, {
@@ -315,34 +432,9 @@ var Root = function (_React$Component) {
             this.toggleInput();
         }
     }, {
-        key: "fetchDetails",
-        value: function fetchDetails(ticker) {
-            var _this4 = this;
-
-            fetch("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&apikey=AU2Q75AJK6FBD0KQ").then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                //Clean array
-                var cleanArray = Object.keys(json['Time Series (Daily)']).map(function (key) {
-                    return json['Time Series (Daily)'][key];
-                });
-                //Save only today's and yesterday's details
-                var todayDetails = cleanArray[0];
-                var yesterdayDetails = cleanArray[1];
-
-                _this4.setState({
-                    close: todayDetails["4. close"],
-                    open: todayDetails["1. open"],
-                    priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
-                });
-            }).catch(function (err) {
-                _this4.setState({ error: [].concat(_toConsumableArray(_this4.state.error), [err]) });
-            });
-        }
-    }, {
         key: "fetchNews",
         value: function fetchNews(ticker) {
-            var _this5 = this;
+            var _this4 = this;
 
             var api_key = '60c438deac3f44ee98d47227f06193e1';
             var search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search';
@@ -353,9 +445,9 @@ var Root = function (_React$Component) {
             fetch(search_url + "?q=$" + ticker + "+stock&sortby=date&count=3", { headers: fetchHeaders }).then(function (response) {
                 return response.json();
             }).then(function (json) {
-                _this5.setState({ news: json.value });
+                _this4.setState({ news: json.value });
             }).catch(function (error) {
-                _this5.setState({ error: [].concat(_toConsumableArray(_this5.state.error), [error]) });
+                _this4.setState({ error: [].concat(_toConsumableArray(_this4.state.error), [error]) });
             });
         }
 
@@ -422,7 +514,7 @@ var Root = function (_React$Component) {
     }, {
         key: "tickerNews",
         value: function tickerNews() {
-            var _this6 = this;
+            var _this5 = this;
 
             return this.state.news.map(function (article, index) {
                 return React.createElement(
@@ -445,7 +537,7 @@ var Root = function (_React$Component) {
                             null,
                             article.provider[0].name,
                             " | ",
-                            _this6.timeSince(article.datePublished)
+                            _this5.timeSince(article.datePublished)
                         )
                     )
                 );
@@ -469,7 +561,7 @@ var Root = function (_React$Component) {
         value: function handleSubmit() {
             if (this.state.tickerStorage) {
                 this.setState({ ticker: this.state.tickerStorage });
-                this.fetchDetails(this.state.tickerStorage);
+                // this.fetchDetails(this.state.tickerStorage)
                 this.fetchNews(this.state.tickerStorage);
                 this.toggleInput();
                 this.setState({ tickerStorage: '' });
@@ -517,32 +609,12 @@ var Root = function (_React$Component) {
             }
         }
     }, {
-        key: "tickerDetails",
-        value: function tickerDetails() {
-            var priceChangeStatus = this.state.priceChange < 0 ? _root2.default.statusDown : _root2.default.statusUp;
-            var priceChange = this.state.priceChange < 0 ? this.state.priceChange : "+ " + this.state.priceChange;
-            return React.createElement(
-                "div",
-                { className: _root2.default.details },
-                React.createElement(
-                    "h3",
-                    null,
-                    this.state.ticker
-                ),
-                React.createElement(
-                    "div",
-                    { className: priceChangeStatus + " " + _root2.default.priceChange },
-                    priceChange
-                )
-            );
-        }
-    }, {
         key: "selectAccountTicker",
         value: function selectAccountTicker() {
-            var _this7 = this;
+            var _this6 = this;
 
             var options = function options() {
-                return _this7.state.records.map(function (record, index) {
+                return _this6.state.records.map(function (record, index) {
                     return React.createElement(
                         "option",
                         { key: index, value: record.Id },
@@ -587,7 +659,7 @@ var Root = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: _root2.default.news },
-                this.state.priceChange ? this.tickerDetails() : null,
+                React.createElement(_tickerDetails2.default, { ticker: this.state.ticker }),
                 React.createElement(
                     "div",
                     { className: _root2.default.myBook },
@@ -644,5 +716,6 @@ quip.elements.initialize({
 });
 
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=element.js.map
