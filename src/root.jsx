@@ -1,5 +1,5 @@
 // Copyright 2017 Quip
-//import Service from "./service.jsx"
+import {SalesforceClient}from "./service.jsx"
 import Styles from "./root.less";
 
 class Root extends React.Component {
@@ -16,6 +16,7 @@ class Root extends React.Component {
             open: null,
             priceChange: null,
             inputShow: false,
+            records: [],
             error: []
         }
     }
@@ -24,6 +25,19 @@ class Root extends React.Component {
         let ticker = this.state.ticker;
         this.fetchNews(ticker);
         this.fetchDetails(ticker);
+        this.fetchAccounts();
+    }
+
+    fetchAccounts() {
+        let sfClient = new SalesforceClient()
+        sfClient.fetchRecordTypeData("Account")
+        .then(response => {
+            let records = response.records
+            this.setState({records: records})
+        })
+        .catch(error => {
+            this.setState({ error: [...this.state.error, err] });
+        })
     }
 
     fetchDetails(ticker) {
@@ -172,18 +186,26 @@ class Root extends React.Component {
     }
 
     tickerDetails() {
-
         let priceChangeStatus = this.state.priceChange < 0 ? Styles.statusDown : Styles.statusUp;
-
+        let priceChange = this.state.priceChange < 0 ? this.state.priceChange : `+ ${this.state.priceChange}`
         return (
             <div className={Styles.details}>
                 <h3>{this.state.ticker}</h3>
                 <div className={`${priceChangeStatus} ${Styles.priceChange}`}>
-                    {this.state.priceChange}
+                    {priceChange}
                 </div>
             </div>
         )
     }
+
+    printSalesforceData() {
+        return this.state.records.map((record, index) =>
+            <div key={index}>
+                {record.Name}
+            </div>
+        )
+    }
+
     //Render APP
     render() {
         return (
@@ -202,6 +224,9 @@ class Root extends React.Component {
             <span className={Styles.label}>Recent {this.state.ticker} News</span>
             {this.state.news ? this.tickerNews() : null}
             {this.tickerInput()}
+            <div>
+                {this.state.records ? this.printSalesforceData() : null}
+            </div>
           </div>
         );
     }
@@ -209,6 +234,7 @@ class Root extends React.Component {
 
 quip.elements.initialize({
     initializationCallback: function(root) {
+        var rootRecord = quip.elements.getRootRecord();
         ReactDOM.render(<Root/>, root);
     }
 });

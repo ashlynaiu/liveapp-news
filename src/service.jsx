@@ -2,8 +2,8 @@
 
 const DEV_LOCALLY = true;
 
-const INSTANCE_URL = "https://gs0.salesforce.com";
-const BASE_URL = "services/data/v41.0";
+const INSTANCE_URL = "https://aaiu-dev-ed.my.salesforce.com";
+const BASE_URL = "services/data/v20.0";
 const URL = `${INSTANCE_URL}/${BASE_URL}`;
 
 const OBJECT_INFO_ENDPOINT = "ui-api/object-info";
@@ -13,7 +13,7 @@ const RECORDS_BATCH_ENDPOINT = "ui-api/records/batch";
 
 const SOQL_ENDPOINT = "query";
 
-const ACCESS_TOKEN = {ADD_BY_YOU};
+const ACCESS_TOKEN = "00Df4000001dlcK!ARkAQFyamQu4LVd1PEjl6OmIhzR727eYgzErpadDFzEC64Is.goFMwlVGXgBP8zOwI5eButkjR7hpfgJibraxYmgGiELSAg8";
 
 export class SalesforceClient {
     toQueryString(params) {
@@ -40,6 +40,7 @@ export class SalesforceClient {
     fetchRecordTypeData(recordType) {
         const params = {q: `SELECT id, name from ${recordType}`};
         const soqlUrl = `${URL}/${SOQL_ENDPOINT}/`;
+
         return this.fetch(soqlUrl, params);
     }
 
@@ -70,7 +71,6 @@ export class SalesforceClient {
     fetch(baseUrl, params = {}) {
         const queryString = this.toQueryString(params);
         let url = queryString ? baseUrl + "?" + queryString : baseUrl;
-
         return fetch(url, {
             method: "GET",
             mode: "cors",
