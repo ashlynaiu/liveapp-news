@@ -1,6 +1,6 @@
-// Copyright 2017 Quip
-import {SalesforceClient}from "./service.jsx"
-import TickerDetails from "./tickerDetails.jsx"
+import {SalesforceClient} from "./service.jsx";
+import News from "./news.jsx";
+import TickerDetails from "./tickerDetails.jsx";
 import Styles from "./root.less";
 
 class Root extends React.Component {
@@ -11,7 +11,6 @@ class Root extends React.Component {
         this.handleUpdate = this.handleUpdate.bind(this);
         this.fetchAccountTicker = this.fetchAccountTicker.bind(this);
         this.state = {
-            news: null,
             ticker: 'CRM',
             tickerStorage: '',
             inputShow: false,
@@ -66,76 +65,6 @@ class Root extends React.Component {
             .catch(error => {
                 this.setState({error:[...this.state.error, error]})
             })
-    }
-
-    //Calculate the article's time since published
-    timeSince(date) {
-        let seconds = Math.floor((new Date() - new Date(date)) / 1000)
-
-        let interval = Math.floor(seconds / 31536000)
-        if (interval >= 1) {
-            if (interval == 1){
-                return interval + ' year ago'
-            }
-            return interval + ' years ago'
-        }
-
-        interval = Math.floor(seconds / 2592000)
-        if (interval >= 1) {
-            if (interval == 1){
-                return interval + ' month ago'
-            }
-            return interval + ' months ago'
-        }
-
-        interval = Math.floor(seconds / 86400)
-        if (interval >= 1) {
-            if (interval == 1){
-                return interval + ' day ago'
-            }
-            return interval + ' days ago'
-        }
-
-        interval = Math.floor(seconds / 3600)
-
-        if (interval >= 1) {
-            if (interval == 1){
-                return interval + ' hour ago'
-            }
-            return interval + ' hours ago'
-        }
-
-        interval = Math.floor(seconds / 60)
-
-        if (interval >= 1) {
-            if (interval == 1){
-                return interval + ' minute ago'
-            }
-            return interval + ' minutes ago'
-        }
-
-        interval = Math.floor(seconds)
-
-        if (interval == 1){
-            return interval + ' second ago'
-        }
-
-        return interval + ' seconds ago'
-    }
-
-    //Render the tickerNews
-    tickerNews() {
-        return this.state.news.map((article, index) =>
-            <div className={Styles.newsContainer} key={index}>
-                <h4 className={Styles.truncate}>
-                    <a href={article.url} target="_blank">{article.name}</a>
-                </h4>
-                <div>
-                    <span>{article.provider[0].name} | {this.timeSince(article.datePublished)}
-                    </span>
-                </div>
-            </div>
-        )
     }
 
     //Input component functions
@@ -215,7 +144,7 @@ class Root extends React.Component {
                 </div>
             </div>
             <span className={Styles.label}>Recent {this.state.ticker} News</span>
-            {this.state.news ? this.tickerNews() : null}
+            <News ticker={this.state.ticker}></News>
             {this.tickerInput()}
           </div>
         );
