@@ -9,11 +9,7 @@ class Root extends React.Component {
         super(props);
         this.updateTicker = this.updateTicker.bind(this);
         this.state = {
-            ticker: 'CRM',
-            tickerStorage: '',
-            inputShow: false,
-            records: [],
-            error: []
+            ticker: 'CRM'
         }
     }
 
