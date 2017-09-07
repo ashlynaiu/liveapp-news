@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "dist";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -75,194 +75,6 @@ module.exports = {"news":"wZCJ5NZMxDLOtvkTS64kN","newsInput":"_3j3n8vdkkF4_zxLwh
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _root = __webpack_require__(0);
-
-var _root2 = _interopRequireDefault(_root);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var News = function (_React$Component) {
-    _inherits(News, _React$Component);
-
-    function News(props) {
-        _classCallCheck(this, News);
-
-        var _this = _possibleConstructorReturn(this, (News.__proto__ || Object.getPrototypeOf(News)).call(this, props));
-
-        _this.state = {
-            news: null,
-            error: []
-        };
-        return _this;
-    }
-
-    _createClass(News, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var ticker = this.state.ticker;
-            this.fetchNews(ticker);
-        }
-    }, {
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(nextProps) {
-            if (this.props.ticker !== nextProps.ticker) {
-                this.fetchNews(nextProps.ticker);
-            }
-        }
-    }, {
-        key: 'fetchNews',
-        value: function fetchNews(ticker) {
-            var _this2 = this;
-
-            var api_key = '60c438deac3f44ee98d47227f06193e1';
-            var search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search';
-            var fetchHeaders = {
-                'Ocp-Apim-Subscription-Key': '' + api_key
-            };
-
-            fetch(search_url + '?q=$' + ticker + '+stock&sortby=date&count=3', { headers: fetchHeaders }).then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                console.log('setting state');
-                _this2.setState({ news: json.value });
-            }).catch(function (error) {
-                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [error]) });
-            });
-        }
-
-        //Calculate the article's time since published
-
-    }, {
-        key: 'timeSince',
-        value: function timeSince(date) {
-            var seconds = Math.floor((new Date() - new Date(date)) / 1000);
-
-            var interval = Math.floor(seconds / 31536000);
-            if (interval >= 1) {
-                if (interval == 1) {
-                    return interval + ' year ago';
-                }
-                return interval + ' years ago';
-            }
-
-            interval = Math.floor(seconds / 2592000);
-            if (interval >= 1) {
-                if (interval == 1) {
-                    return interval + ' month ago';
-                }
-                return interval + ' months ago';
-            }
-
-            interval = Math.floor(seconds / 86400);
-            if (interval >= 1) {
-                if (interval == 1) {
-                    return interval + ' day ago';
-                }
-                return interval + ' days ago';
-            }
-
-            interval = Math.floor(seconds / 3600);
-
-            if (interval >= 1) {
-                if (interval == 1) {
-                    return interval + ' hour ago';
-                }
-                return interval + ' hours ago';
-            }
-
-            interval = Math.floor(seconds / 60);
-
-            if (interval >= 1) {
-                if (interval == 1) {
-                    return interval + ' minute ago';
-                }
-                return interval + ' minutes ago';
-            }
-
-            interval = Math.floor(seconds);
-
-            if (interval == 1) {
-                return interval + ' second ago';
-            }
-
-            return interval + ' seconds ago';
-        }
-    }, {
-        key: 'tickerNews',
-        value: function tickerNews() {
-            var _this3 = this;
-
-            return this.state.news.map(function (article, index) {
-                return React.createElement(
-                    'div',
-                    { className: _root2.default.newsContainer, key: index },
-                    React.createElement(
-                        'h4',
-                        { className: _root2.default.truncate },
-                        React.createElement(
-                            'a',
-                            { href: article.url, target: '_blank' },
-                            article.name
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        null,
-                        React.createElement(
-                            'span',
-                            null,
-                            article.provider[0].name,
-                            ' | ',
-                            _this3.timeSince(article.datePublished)
-                        )
-                    )
-                );
-            });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return React.createElement(
-                'div',
-                null,
-                React.createElement(
-                    'span',
-                    { className: _root2.default.label },
-                    'Recent ',
-                    this.state.ticker,
-                    ' News'
-                ),
-                this.state.news ? this.tickerNews() : null
-            );
-        }
-    }]);
-
-    return News;
-}(React.Component);
-
-exports.default = News;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -291,7 +103,7 @@ var RECORDS_BATCH_ENDPOINT = "ui-api/records/batch";
 
 var SOQL_ENDPOINT = "query";
 
-var ACCESS_TOKEN = "00Df4000001dlcK!ARkAQFyamQu4LVd1PEjl6OmIhzR727eYgzErpadDFzEC64Is.goFMwlVGXgBP8zOwI5eButkjR7hpfgJibraxYmgGiELSAg8";
+var ACCESS_TOKEN = "00Df4000001dlcK!ARkAQDq5cgtXuqEjC0ATB9UAFKonlMa_vGs2pYOt4CSA1BPbzX53V2ND19xeol4FvicXf9HJ3hm2jAaBFKUh5XzX2ghOm4jj";
 
 var SalesforceClient = exports.SalesforceClient = function () {
     function SalesforceClient() {
@@ -415,7 +227,7 @@ var SalesforceClient = exports.SalesforceClient = function () {
 }();
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -441,217 +253,168 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var TickerDetails = function (_React$Component) {
-    _inherits(TickerDetails, _React$Component);
+var News = function (_React$Component) {
+    _inherits(News, _React$Component);
 
-    function TickerDetails(props) {
-        _classCallCheck(this, TickerDetails);
+    function News(props) {
+        _classCallCheck(this, News);
 
-        var _this = _possibleConstructorReturn(this, (TickerDetails.__proto__ || Object.getPrototypeOf(TickerDetails)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (News.__proto__ || Object.getPrototypeOf(News)).call(this, props));
 
         _this.state = {
-            close: null,
-            open: null,
-            ticker: '',
-            priceChange: null,
+            news: null,
             error: []
         };
         return _this;
     }
 
-    _createClass(TickerDetails, [{
-        key: 'componentWillMount',
-        value: function componentWillMount() {
-            var ticker = this.props.ticker;
-            this.fetchDetails(ticker);
+    _createClass(News, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var ticker = this.state.ticker;
+            this.fetchNews(ticker);
         }
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             if (this.props.ticker !== nextProps.ticker) {
-                this.fetchDetails(nextProps.ticker);
+                this.fetchNews(nextProps.ticker);
             }
         }
     }, {
-        key: 'fetchDetails',
-        value: function fetchDetails(ticker) {
+        key: 'fetchNews',
+        value: function fetchNews(ticker) {
             var _this2 = this;
 
-            fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + ticker + '&apikey=AU2Q75AJK6FBD0KQ').then(function (response) {
+            var api_key = '60c438deac3f44ee98d47227f06193e1';
+            var search_url = 'https://api.cognitive.microsoft.com/bing/v7.0/news/search';
+            var fetchHeaders = {
+                'Ocp-Apim-Subscription-Key': '' + api_key
+            };
+
+            fetch(search_url + '?q=$' + ticker + '+stock&sortby=date&count=3', { headers: fetchHeaders }).then(function (response) {
                 return response.json();
             }).then(function (json) {
-                //Clean array
-                var cleanArray = Object.keys(json['Time Series (Daily)']).map(function (key) {
-                    return json['Time Series (Daily)'][key];
-                });
-                //Save only today's and yesterday's details
-                var todayDetails = cleanArray[0];
-                var yesterdayDetails = cleanArray[1];
+                _this2.setState({ news: json.value });
+            }).catch(function (error) {
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [error]) });
+            });
+        }
 
-                _this2.setState({
-                    close: todayDetails["4. close"],
-                    open: todayDetails["1. open"],
-                    priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
-                });
-            }).catch(function (err) {
-                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
+        //Calculate the article's time since published
+
+    }, {
+        key: 'timeSince',
+        value: function timeSince(date) {
+            var seconds = Math.floor((new Date() - new Date(date)) / 1000);
+
+            var interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' year ago';
+                }
+                return interval + ' years ago';
+            }
+
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' month ago';
+                }
+                return interval + ' months ago';
+            }
+
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' day ago';
+                }
+                return interval + ' days ago';
+            }
+
+            interval = Math.floor(seconds / 3600);
+
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' hour ago';
+                }
+                return interval + ' hours ago';
+            }
+
+            interval = Math.floor(seconds / 60);
+
+            if (interval >= 1) {
+                if (interval == 1) {
+                    return interval + ' minute ago';
+                }
+                return interval + ' minutes ago';
+            }
+
+            interval = Math.floor(seconds);
+
+            if (interval == 1) {
+                return interval + ' second ago';
+            }
+
+            return interval + ' seconds ago';
+        }
+    }, {
+        key: 'tickerNews',
+        value: function tickerNews() {
+            var _this3 = this;
+
+            return this.state.news.map(function (article, index) {
+                return React.createElement(
+                    'div',
+                    { className: _root2.default.newsContainer, key: index },
+                    React.createElement(
+                        'h4',
+                        { className: _root2.default.truncate },
+                        React.createElement(
+                            'a',
+                            { href: article.url, target: '_blank' },
+                            article.name
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
+                        React.createElement(
+                            'span',
+                            null,
+                            article.provider[0].name,
+                            ' | ',
+                            _this3.timeSince(article.datePublished)
+                        )
+                    )
+                );
             });
         }
     }, {
         key: 'render',
         value: function render() {
-            var priceChangeStatus = this.state.priceChange < 0 ? _root2.default.statusDown : _root2.default.statusUp;
-            var priceChange = this.state.priceChange < 0 ? this.state.priceChange : '+ ' + this.state.priceChange;
             return React.createElement(
                 'div',
-                { className: _root2.default.details },
+                null,
                 React.createElement(
-                    'h3',
-                    null,
-                    this.props.ticker
+                    'span',
+                    { className: _root2.default.label },
+                    'Recent ',
+                    this.state.ticker,
+                    ' News'
                 ),
-                React.createElement(
-                    'div',
-                    { className: priceChangeStatus + ' ' + _root2.default.priceChange },
-                    priceChange
-                )
+                this.state.news ? this.tickerNews() : null
             );
         }
     }]);
 
-    return TickerDetails;
+    return News;
 }(React.Component);
 
-exports.default = TickerDetails;
+exports.default = News;
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _service = __webpack_require__(2);
-
-var _news = __webpack_require__(1);
-
-var _news2 = _interopRequireDefault(_news);
-
-var _tickerDetails = __webpack_require__(3);
-
-var _tickerDetails2 = _interopRequireDefault(_tickerDetails);
-
-var _tickerChanger = __webpack_require__(14);
-
-var _tickerChanger2 = _interopRequireDefault(_tickerChanger);
-
-var _root = __webpack_require__(0);
-
-var _root2 = _interopRequireDefault(_root);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Root = function (_React$Component) {
-    _inherits(Root, _React$Component);
-
-    function Root(props) {
-        _classCallCheck(this, Root);
-
-        var _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props));
-
-        _this.updateTicker = _this.updateTicker.bind(_this);
-        _this.state = {
-            ticker: 'CRM',
-            tickerStorage: '',
-            inputShow: false,
-            records: [],
-            error: []
-        };
-        return _this;
-    }
-
-    _createClass(Root, [{
-        key: "updateTicker",
-        value: function updateTicker(newTicker) {
-            this.setState({ ticker: newTicker });
-        }
-
-        //Render APP
-
-    }, {
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                { className: _root2.default.news },
-                React.createElement(_tickerDetails2.default, { ticker: this.state.ticker }),
-                React.createElement(
-                    "div",
-                    { className: _root2.default.myBook },
-                    React.createElement(
-                        "div",
-                        { className: _root2.default.leftColumn },
-                        React.createElement(
-                            "span",
-                            { className: _root2.default.label },
-                            "Clients Affected"
-                        ),
-                        React.createElement(
-                            "h4",
-                            null,
-                            "60%"
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: _root2.default.rightColumn },
-                        React.createElement(
-                            "span",
-                            { className: _root2.default.label },
-                            "Total AUM"
-                        ),
-                        React.createElement(
-                            "h4",
-                            null,
-                            "$2,130,000"
-                        )
-                    )
-                ),
-                React.createElement(_news2.default, { ticker: this.state.ticker }),
-                React.createElement(_tickerChanger2.default, { updateTicker: this.updateTicker })
-            );
-        }
-    }]);
-
-    return Root;
-}(React.Component);
-
-quip.elements.initialize({
-    initializationCallback: function initializationCallback(root) {
-        var rootRecord = quip.elements.getRootRecord();
-        ReactDOM.render(React.createElement(Root, null), root);
-    }
-});
-
-/***/ }),
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -663,7 +426,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _service = __webpack_require__(2);
+var _service = __webpack_require__(1);
 
 var _root = __webpack_require__(0);
 
@@ -842,9 +605,6 @@ var TickerChanger = function (_React$Component) {
                 );
             }
         }
-
-        //Render APP
-
     }, {
         key: "render",
         value: function render() {
@@ -860,6 +620,229 @@ var TickerChanger = function (_React$Component) {
 }(React.Component);
 
 exports.default = TickerChanger;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _root = __webpack_require__(0);
+
+var _root2 = _interopRequireDefault(_root);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TickerDetails = function (_React$Component) {
+    _inherits(TickerDetails, _React$Component);
+
+    function TickerDetails(props) {
+        _classCallCheck(this, TickerDetails);
+
+        var _this = _possibleConstructorReturn(this, (TickerDetails.__proto__ || Object.getPrototypeOf(TickerDetails)).call(this, props));
+
+        _this.state = {
+            close: null,
+            open: null,
+            ticker: '',
+            priceChange: null,
+            error: []
+        };
+        return _this;
+    }
+
+    _createClass(TickerDetails, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var ticker = this.props.ticker;
+            this.fetchDetails(ticker);
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if (this.props.ticker !== nextProps.ticker) {
+                this.fetchDetails(nextProps.ticker);
+            }
+        }
+    }, {
+        key: 'fetchDetails',
+        value: function fetchDetails(ticker) {
+            var _this2 = this;
+
+            fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + ticker + '&apikey=AU2Q75AJK6FBD0KQ').then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                //Clean array
+                var cleanArray = Object.keys(json['Time Series (Daily)']).map(function (key) {
+                    return json['Time Series (Daily)'][key];
+                });
+                //Save only today's and yesterday's details
+                var todayDetails = cleanArray[0];
+                var yesterdayDetails = cleanArray[1];
+
+                _this2.setState({
+                    close: todayDetails["4. close"],
+                    open: todayDetails["1. open"],
+                    priceChange: (todayDetails["4. close"] - yesterdayDetails["4. close"]).toFixed(2)
+                });
+            }).catch(function (err) {
+                _this2.setState({ error: [].concat(_toConsumableArray(_this2.state.error), [err]) });
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var priceChangeStatus = this.state.priceChange < 0 ? _root2.default.statusDown : _root2.default.statusUp;
+            var priceChange = this.state.priceChange < 0 ? this.state.priceChange : '+ ' + this.state.priceChange;
+            return React.createElement(
+                'div',
+                { className: _root2.default.details },
+                React.createElement(
+                    'h3',
+                    null,
+                    this.props.ticker
+                ),
+                React.createElement(
+                    'div',
+                    { className: priceChangeStatus + ' ' + _root2.default.priceChange },
+                    priceChange
+                )
+            );
+        }
+    }]);
+
+    return TickerDetails;
+}(React.Component);
+
+exports.default = TickerDetails;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _service = __webpack_require__(1);
+
+var _news = __webpack_require__(2);
+
+var _news2 = _interopRequireDefault(_news);
+
+var _tickerDetails = __webpack_require__(4);
+
+var _tickerDetails2 = _interopRequireDefault(_tickerDetails);
+
+var _tickerChanger = __webpack_require__(3);
+
+var _tickerChanger2 = _interopRequireDefault(_tickerChanger);
+
+var _root = __webpack_require__(0);
+
+var _root2 = _interopRequireDefault(_root);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Root = function (_React$Component) {
+    _inherits(Root, _React$Component);
+
+    function Root(props) {
+        _classCallCheck(this, Root);
+
+        var _this = _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).call(this, props));
+
+        _this.updateTicker = _this.updateTicker.bind(_this);
+        _this.state = {
+            ticker: 'CRM'
+        };
+        return _this;
+    }
+
+    _createClass(Root, [{
+        key: "updateTicker",
+        value: function updateTicker(newTicker) {
+            this.setState({ ticker: newTicker });
+        }
+
+        //Render APP
+
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: _root2.default.news },
+                React.createElement(_tickerDetails2.default, { ticker: this.state.ticker }),
+                React.createElement(
+                    "div",
+                    { className: _root2.default.myBook },
+                    React.createElement(
+                        "div",
+                        { className: _root2.default.leftColumn },
+                        React.createElement(
+                            "span",
+                            { className: _root2.default.label },
+                            "Clients Affected"
+                        ),
+                        React.createElement(
+                            "h4",
+                            null,
+                            "60%"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: _root2.default.rightColumn },
+                        React.createElement(
+                            "span",
+                            { className: _root2.default.label },
+                            "Total AUM"
+                        ),
+                        React.createElement(
+                            "h4",
+                            null,
+                            "$2,130,000"
+                        )
+                    )
+                ),
+                React.createElement(_news2.default, { ticker: this.state.ticker }),
+                React.createElement(_tickerChanger2.default, { updateTicker: this.updateTicker })
+            );
+        }
+    }]);
+
+    return Root;
+}(React.Component);
+
+quip.elements.initialize({
+    initializationCallback: function initializationCallback(root) {
+        var rootRecord = quip.elements.getRootRecord();
+        ReactDOM.render(React.createElement(Root, null), root);
+    }
+});
 
 /***/ })
 /******/ ]);

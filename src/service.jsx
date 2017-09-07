@@ -13,7 +13,7 @@ const RECORDS_BATCH_ENDPOINT = "ui-api/records/batch";
 
 const SOQL_ENDPOINT = "query";
 
-const ACCESS_TOKEN = "00Df4000001dlcK!ARkAQFyamQu4LVd1PEjl6OmIhzR727eYgzErpadDFzEC64Is.goFMwlVGXgBP8zOwI5eButkjR7hpfgJibraxYmgGiELSAg8";
+const ACCESS_TOKEN = "00Df4000001dlcK!ARkAQDq5cgtXuqEjC0ATB9UAFKonlMa_vGs2pYOt4CSA1BPbzX53V2ND19xeol4FvicXf9HJ3hm2jAaBFKUh5XzX2ghOm4jj";
 
 export class SalesforceClient {
     toQueryString(params) {
